@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -98,11 +99,14 @@ public class EspecieController {
 
     @DeleteMapping("/especies/{id}")
     public ResponseEntity<Void> deletarEspecie(@PathVariable Long id) {
-        var especie = especieRepositorio.findById(id).orElse(null);
-        if (especie == null)
-            return ResponseEntity.notFound().build();
-
-        especieRepositorio.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return especieRepositorio.findById(id).map(especie -> {
+            try {
+                especieRepositorio.delete(especie);
+                return ResponseEntity.noContent().build();
+            } catch (DataIntegrityViolationException e) {
+                // Retorna conflito caso exista FK que impeça exclusão
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
