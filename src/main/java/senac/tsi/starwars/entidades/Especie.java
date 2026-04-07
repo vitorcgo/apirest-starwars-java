@@ -1,19 +1,18 @@
 package senac.tsi.starwars.entidades;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Especie {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -31,8 +30,11 @@ public class Especie {
     @Size(min = 1, max = 100)
     private String linguagem;
 
-    public Especie() {
-    }
+    // Relacionamento com Personagem
+    @OneToMany(mappedBy = "especie", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Personagem> personagens;
+
+    public Especie() { }
 
     public Especie(String nome, String classificacao, String linguagem) {
         this.nome = nome;
@@ -47,37 +49,20 @@ public class Especie {
         this.linguagem = linguagem;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getClassificacao() { return classificacao; }
+    public void setClassificacao(String classificacao) { this.classificacao = classificacao; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getLinguagem() { return linguagem; }
+    public void setLinguagem(String linguagem) { this.linguagem = linguagem; }
 
-    public String getClassificacao() {
-        return classificacao;
-    }
-
-    public void setClassificacao(String classificacao) {
-        this.classificacao = classificacao;
-    }
-
-    public String getLinguagem() {
-        return linguagem;
-    }
-
-    public void setLinguagem(String linguagem) {
-        this.linguagem = linguagem;
-    }
+    public List<Personagem> getPersonagens() { return personagens; }
+    public void setPersonagens(List<Personagem> personagens) { this.personagens = personagens; }
 
     @Override
     public boolean equals(Object o) {
