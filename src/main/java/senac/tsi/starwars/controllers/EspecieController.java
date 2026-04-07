@@ -102,11 +102,11 @@ public class EspecieController {
         return especieRepositorio.findById(id).map(especie -> {
             try {
                 especieRepositorio.delete(especie);
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.<Void>noContent().build();
             } catch (DataIntegrityViolationException e) {
                 // Retorna conflito caso exista FK que impeça exclusão
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                return ResponseEntity.<Void>status(HttpStatus.CONFLICT).build();
             }
-        }).orElse(ResponseEntity.notFound().build());
+        }).orElse(ResponseEntity.<Void>notFound().build());
     }
 }
