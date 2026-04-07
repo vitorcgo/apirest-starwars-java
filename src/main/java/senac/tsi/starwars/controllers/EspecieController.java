@@ -104,7 +104,7 @@ public class EspecieController {
                 especieRepositorio.delete(especie);
                 return ResponseEntity.<Void>noContent().build();
             } catch (DataIntegrityViolationException e) {
-                // Retorna conflito caso exista FK que impeça exclusão
+                // Caso haja personagens vinculados, retorna 409
                 return ResponseEntity.<Void>status(HttpStatus.CONFLICT).build();
             }
         }).orElse(ResponseEntity.<Void>notFound().build());
